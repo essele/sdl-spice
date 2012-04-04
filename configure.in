@@ -1640,14 +1640,17 @@ CheckSpiceVideo()
 AC_HELP_STRING([--enable-video-spice], [use spice video driver [[default=yes]]]),
                   , enable_video_spice=yes)
     if test x$enable_video_spice = xyes; then
+        video_spice=no
         AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
         if test x$PKG_CONFIG != xno; then
-            if $PKG_CONFIG --atleast-pkgconfig-version 0.7 && $PKG_CONFIG --atleast-version 1.0 spice-protocol; then
-                SPICE_CFLAGS=`$PKG_CONFIG --cflags directfb`
-                SPICE_LIBS=`$PKG_CONFIG --libs directfb`
+            if $PKG_CONFIG --atleast-pkgconfig-version 0.7 && $PKG_CONFIG --atleast-version 0.10.1 spice-protocol; then
+                SPICE_CFLAGS=`$PKG_CONFIG --cflags spice-protocol`
+                SPICE_LIBS=`$PKG_CONFIG --libs spice-protocol`
                 video_spice=yes
             fi
         fi
+        AC_MSG_CHECKING(for Spice support)
+        AC_MSG_RESULT($video_spice)
         if test x$video_spice = xyes; then
 	    AC_DEFINE(SDL_VIDEO_DRIVER_SPICE)
 	    SOURCES="$SOURCES $srcdir/src/video/spice/*.c"
@@ -2372,7 +2375,6 @@ case "$host" in
         esac
         CheckVisibilityHidden
         CheckDummyVideo
-        CheckSpiceVideo
         CheckDiskAudio
         CheckDummyAudio
         CheckDLOPEN
@@ -2390,6 +2392,7 @@ case "$host" in
         CheckNANOX
         CheckFBCON
         CheckDirectFB
+        CheckSpiceVideo
         CheckPS2GS
         CheckPS3
         CheckGGI

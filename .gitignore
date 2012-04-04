@@ -8,3 +8,5 @@ configure
 test/autom4te.cache
 test/configure
 build
+sdl-config
+sdl.pc
