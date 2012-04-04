@@ -29,7 +29,7 @@
 #include "../../events/SDL_events_c.h"
 
 #include "SDL_spicevideo.h"
-#include "SDL_scpieevents_c.h"
+#include "SDL_spiceevents_c.h"
 
 void SPICE_PumpEvents(_THIS)
 {
