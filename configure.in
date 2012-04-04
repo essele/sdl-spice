@@ -1633,6 +1633,31 @@ AC_HELP_STRING([--enable-video-gem], [use Atari Gem video driver [[default=yes]]
     fi
 }
 
+dnl Setup the spice video driver
+CheckSpiceVideo()
+{
+    AC_ARG_ENABLE(video-spice,
+AC_HELP_STRING([--enable-video-spice], [use spice video driver [[default=yes]]]),
+                  , enable_video_spice=yes)
+    if test x$enable_video_spice = xyes; then
+        AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+        if test x$PKG_CONFIG != xno; then
+            if $PKG_CONFIG --atleast-pkgconfig-version 0.7 && $PKG_CONFIG --atleast-version 1.0 spice-protocol; then
+                SPICE_CFLAGS=`$PKG_CONFIG --cflags directfb`
+                SPICE_LIBS=`$PKG_CONFIG --libs directfb`
+                video_spice=yes
+            fi
+        fi
+        if test x$video_spice = xyes; then
+	    AC_DEFINE(SDL_VIDEO_DRIVER_SPICE)
+	    SOURCES="$SOURCES $srcdir/src/video/spice/*.c"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS $SPICE_CFLAGS"
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SPICE_LIBS"
+            have_video=yes
+        fi
+    fi
+}
+
 dnl rcg04172001 Set up the Null video driver.
 CheckDummyVideo()
 {
@@ -2347,6 +2372,7 @@ case "$host" in
         esac
         CheckVisibilityHidden
         CheckDummyVideo
+        CheckSpiceVideo
         CheckDiskAudio
         CheckDummyAudio
         CheckDLOPEN
